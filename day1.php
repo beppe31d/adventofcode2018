@@ -1,4 +1,6 @@
 <?php
+use AdventOfCode\Device\ChronalCalibration;
+
 /**
  * After feeling like you've been falling for a few minutes, you look at the device's tiny screen. "Error: Device must
  * be calibrated before first use. Frequency drift detected. Cannot maintain destination lock." Below the message,
@@ -49,31 +51,14 @@
  * What is the first frequency your device reaches twice?
  */
 
+include_once 'vendor/autoload.php';
+
 $inputs = file('./day1.input');
-
-$currentFrequency = 0;
-$finalFrequency = null;
-$firstFrequencyReachedTwice = null;
-$frequenciesReached = [
-    0
-];
-
-while ($firstFrequencyReachedTwice === null) {
-    foreach($inputs as $input) {
-        $sum += (int)$input;
-        if ($firstFrequencyReachedTwice === null && true === \in_array($sum, $frequenciesReached, true)) {
-            $firstFrequencyReachedTwice = $sum;
-        }
-        $frequenciesReached[] = $sum;
-    }
-    if ($finalFrequency === null) {
-        $finalFrequency = $currentFrequency;
-    }
-}
+$chronicalCalibration = new ChronalCalibration($inputs);
 
 echo 'Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have 
-been applied? ' . $finalFrequency;
+been applied? ' . $chronicalCalibration->getLastFrequency();
 
 echo "\n\n";
 
-echo 'What is the first frequency your device reaches twice? ' . $firstFrequencyReachedTwice;
+echo 'What is the first frequency your device reaches twice? ' . $chronicalCalibration->getFirstFrequencyReachedTwice();

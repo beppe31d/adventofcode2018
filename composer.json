@@ -1,0 +1,17 @@
+{
+  "type": "project",
+  "license": "proprietary",
+  "config": {
+    "platform": {
+      "php": "7.2.1"
+    },
+    "optimize-autoloader": true,
+    "apcu-autoloader": true,
+    "preferred-install": "dist"
+  },
+  "autoload": {
+    "psr-4": {
+      "AdventOfCode\\": "src"
+    }
+  }
+}

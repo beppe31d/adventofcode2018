@@ -1,12 +1,22 @@
 version: '3.2'
 services:
-  php:
+  php: &php-base
     build:
       context: .docker
       dockerfile: Dockerfile
+      args:
+        - composer_version=1.7.2
     environment:
       XDEBUG_CONFIG: "remote_host=${XDEBUG_HOST:-docker.for.mac.host.internal} remote_port=${XDEBUG_PORT:-9003} idekey=${XDEBUG_IDEKEY:-PHPSTORM}"
       PHP_IDE_CONFIG: "serverName=Docker"
     working_dir: /var/www
     volumes:
       - ./:/var/www
+
+  composer:
+      <<: *php-base
+      entrypoint: "composer"
+      depends_on:
+        - php
+      environment:
+        COMPOSER_ALLOW_SUPERUSER: 1

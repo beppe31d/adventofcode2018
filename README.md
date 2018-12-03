@@ -4,5 +4,6 @@ To exec the code
 
 ```
 docker-compose up -d
-docker-compose run --rm php php day1.php
+docker-compose run --rm composer install
+docker-compose run --rm php php day.php 1
 ```

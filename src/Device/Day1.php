@@ -1,5 +1,6 @@
 <?php
-use AdventOfCode\Device\ChronalCalibration;
+
+namespace AdventOfCode\Device;
 
 /**
  * After feeling like you've been falling for a few minutes, you look at the device's tiny screen. "Error: Device must
@@ -51,14 +52,54 @@ use AdventOfCode\Device\ChronalCalibration;
  * What is the first frequency your device reaches twice?
  */
 
-include_once 'vendor/autoload.php';
+/**
+ * Class Day1
+ * @package AdventOfCode\Device
+ */
+class Day1 extends AbstractDay
+{
+    /** @var array */
+    private $frequenciesReached;
 
-$inputs = file('./day1.input');
-$chronicalCalibration = new ChronalCalibration($inputs);
+    public function exec(): void
+    {
+        echo 'Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency 
+        have been applied? ' . $this->getLastFrequency();
 
-echo 'Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have 
-been applied? ' . $chronicalCalibration->getLastFrequency();
+        echo "\n\n";
 
-echo "\n\n";
+        echo 'What is the first frequency your device reaches twice? ' . $this->getFirstFrequencyReachedTwice();
+    }
 
-echo 'What is the first frequency your device reaches twice? ' . $chronicalCalibration->getFirstFrequencyReachedTwice();
+    /**
+     * @return int
+     */
+    private function getLastFrequency(): int
+    {
+        return \array_sum($this->inputs);
+    }
+
+    /**
+     * @return int|null
+     */
+    private function getFirstFrequencyReachedTwice(): ?int
+    {
+        $currentFrequency = 0;
+        $this->frequenciesReached = [
+            $currentFrequency
+        ];
+        $firstFrequencyReachedTwice = null;
+        while ($firstFrequencyReachedTwice === null) {
+            foreach($this->inputs as $input) {
+                $currentFrequency += (int)$input;
+                if ($firstFrequencyReachedTwice === null
+                    && true === \in_array($currentFrequency, $this->frequenciesReached, true)) {
+                    return $currentFrequency;
+                }
+                $this->frequenciesReached[] = $currentFrequency;
+            }
+        }
+
+        return null;
+    }
+}

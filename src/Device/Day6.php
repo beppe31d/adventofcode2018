@@ -50,7 +50,7 @@ class Day6 extends AbstractDay
     {
         $coordinates = $this->hydrateCoordinates();
 
-//        echo 'What is the size of the largest area that isn\'t infinite? ' . $this->findLargestArea($coordinates);
+        echo 'What is the size of the largest area that isn\'t infinite? ' . $this->findLargestArea($coordinates);
         echo "\n\n";
         echo 'What is the size of the region containing all locations which have a total distance to all given 
         coordinates of less than 10000? ' . $this->findLargestAreaWithMaxDistance($coordinates, 10000);

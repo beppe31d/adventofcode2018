@@ -28,75 +28,106 @@ namespace AdventOfCode\Device;
  */
 
 /**
+ * Amused by the speed of your answer, the Elves are curious:
+ *
+ * What would the new winning Elf's score be if the number of the last marble were 100 times larger?
+ */
+
+use AdventOfCode\Entity\Marble;
+
+/**
  * Class Day9
  * @package AdventOfCode\Device
  */
 class Day9 extends AbstractDay
 {
+    /** @var array */
+    private $marbles;
+
     public function exec(): void
     {
+
         echo 'What is the winning Elf\'s score? ' . $this->calculateScore(411, 72059);
+        echo "\n\n";
+        echo 'What would the new winning Elf\'s score be if the number of the last marble were 100 times larger? '
+            . $this->calculateScore(411, 7205900);
     }
 
-    private function calculateScore($numberOfPlayers, $lastMarblePoints): int
+    /**
+     * @param $numberOfPlayers
+     * @param $lastMarblePoints
+     * @return int
+     */
+    private function calculateScore(int $numberOfPlayers, int $lastMarblePoints): int
     {
-        $circle = [
-            0
-        ];
-        $currentMarble = 0;
+        $currentMarble = new Marble();
+        $currentMarble->setValue(0);
+        $currentMarble->setNext(0);
+        $currentMarble->setPrev(0);
+
+        // To avoid memory limit the indexed list stores the index of marbles array.
+        $this->marbles = [$currentMarble];
+
         $points = [];
         for ($i = 0; $i < $numberOfPlayers; $i++) {
             $points[$i] = 0;
         }
 
-        for ($marble = 1; $marble <= $lastMarblePoints; $marble++) {
-            $player = $marble % $numberOfPlayers;
-            $key = \array_search($currentMarble, $circle, true);
+        for ($i = 1; $i <= $lastMarblePoints; $i++) {
+            $player = $i % $numberOfPlayers;
 
-            if ($marble % 23 === 0) {
-                $pointsKey = $this->getPointsKey($circle, $key);
+            if ($i % 23 === 0) {
+                $points[$player] += $i;
 
-                $points[$player] += $marble;
-                $points[$player] += $circle[$pointsKey];
+                for ($c = 0; $c < 7; $c++) {
+                    $currentMarble = $this->marbles[$currentMarble->getPrev()];
+                }
 
-                $currentMarble = $circle[$pointsKey + 1] ?? $circle[0];
-                unset($circle[$pointsKey]);
-                $circle = \array_values($circle);
-
+                $points[$player] += $currentMarble->getValue();
+                $currentMarble = $this->resetMarble($currentMarble);
                 continue;
             }
 
-            $circle = $this->addElementToCircle($circle, $key, $marble);
-            $currentMarble = $marble;
+            $currentMarble = $this->addMarble($currentMarble, $i);
         }
-
-//        echo \implode(' ', $circle) . "\n\n";
 
         return \max($points);
     }
 
-    private function addElementToCircle(array $circle, int $key, int $marble): array
+    /**
+     * @param Marble $currentMarble
+     * @param int $value
+     * @return Marble
+     */
+    private function addMarble(Marble $currentMarble, int $value): Marble
     {
-        if (isset($circle[$key + 1])) {
-            \array_splice( $circle, $key + 2, 0, $marble);
-        } else {
-            \array_splice( $circle, 1, 0, $marble);
-        }
+        $marble = new Marble();
+        $marble->setValue($value);
+        $key = \count($this->marbles);
+        $this->marbles[$key] = $marble;
 
-        return $circle;
+        $next = $this->marbles[$currentMarble->getNext()]->getNext();
+        $this->marbles[$next]->setPrev($key);
+        $marble->setPrev($currentMarble->getNext());
+        $marble->setNext($next);
+        $this->marbles[$currentMarble->getNext()]->setNext($key);
+
+        return $marble;
     }
 
     /**
-     * @param array $circle
-     * @param int $key
-     * @return int
+     * @param Marble $currentMarble
+     * @return Marble
      */
-    private function getPointsKey(array $circle, int $key): int
+    private function resetMarble(Marble $currentMarble): Marble
     {
-        if ($key >= 7) {
-            return $key - 7;
-        }
+        $key = \array_search($currentMarble, $this->marbles, true)[0];
+        $next = $currentMarble->getNext();
+        $prev = $currentMarble->getPrev();
+        $this->marbles[$next]->setPrev($prev);
+        $this->marbles[$prev]->setNext($next);
+        unset($this->marbles[$key]);
 
-        return \count($circle) - 7 + $key;
+        return $this->marbles[$next];
     }
 }

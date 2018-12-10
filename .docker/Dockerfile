@@ -18,3 +18,4 @@ RUN apk add --update-cache $PHPIZE_DEPS && \
     apk del $PHPIZE_DEPS
 
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY php.ini /usr/local/etc/php/conf.d/00-php.ini

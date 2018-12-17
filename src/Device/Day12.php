@@ -21,6 +21,20 @@ class Day12 extends AbstractDay
         $this->hydratePatters();
         echo 'After 20 generations, what is the sum of the numbers of all pots which contain a plant? '
             . $this->sumPlants($initialState, 20);
+        echo "\n\n";
+
+        /**
+         * Pattern for part 2 (generation, start index, sum)
+         * 1994 - 1902 - 171919
+         * 1995 - 1904 - 172005
+         * 1996 - 1906 - 172091
+         * 1997 - 1904 - 172177
+         * 1998 - 1906 - 172263
+         *
+         * Difference is 86 after each step.
+         */
+        echo 'After fifty billion (50000000000) generations, what is the sum of the numbers of all pots which contain a
+        plant? ' . ((50000000000 - 1000) * 86 + $this->sumPlants($initialState, 1000));
     }
 
     /**

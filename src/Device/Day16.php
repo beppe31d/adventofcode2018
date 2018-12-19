@@ -6,6 +6,8 @@ namespace AdventOfCode\Device;
  * @see https://adventofcode.com/2018/day/16
  */
 
+use AdventOfCode\Helper\Registry;
+
 /**
  * Class Day16
  * @package AdventOfCode\Device
@@ -35,8 +37,12 @@ class Day16 extends AbstractDay
     /** @var @array */
     private $opcodes;
 
+    /** @var Registry */
+    private $registry;
+
     public function exec(): void
     {
+        $this->registry = new Registry();
         echo 'how many samples in your puzzle input behave like three or more opcodes? ' . $this->threeOrMoreOpcodes();
         echo "\n\n";
         $opcodes = $this->findOpcodes();
@@ -106,7 +112,7 @@ class Day16 extends AbstractDay
 
             $operation = \explode(' ', \str_replace("\n", '', $input));
             $instruction = $opcodes[$operation[0]];
-            $result = $this->$instruction($result, $operation);
+            $result = $this->registry->$instruction($result, $operation);
         }
 
         return $result[0];
@@ -125,7 +131,7 @@ class Day16 extends AbstractDay
 
         $validOpcodes = 0;
         foreach (self::INSTRUCTIONS as $instruction) {
-            if ($output === \implode(',', $this->$instruction($before, $operation))) {
+            if ($output === \implode(',', $this->registry->$instruction($before, $operation))) {
                 if (false === isset($this->opcodes[$operation[0]]) ||
                     false === \in_array($instruction, $this->opcodes[$operation[0]], true)) {
                     $this->opcodes[$operation[0]][] = $instruction;
@@ -195,197 +201,5 @@ class Day16 extends AbstractDay
     private function searchAfter(string $input): ?array
     {
         return $this->search($input, '/After:  \[(\d+), (\d+), (\d+), (\d+)\]*/');
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function addr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] + $inputs[$operation[2]];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function addi(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] + $operation[2];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function mulr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] * $inputs[$operation[2]];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function muli(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] * $operation[2];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function banr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] & $inputs[$operation[2]];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function bani(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] & $operation[2];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function borr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] | $inputs[$operation[2]];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function bori(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] | $operation[2];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function setr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function seti(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $operation[1];
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function gtir(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $operation[1] > $inputs[$operation[2]] ? 1 : 0;
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function gtri(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] > $operation[2] ? 1 : 0;
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function gtrr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] > $inputs[$operation[2]] ? 1 : 0;
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function eqir(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $operation[1] === $inputs[$operation[2]] ? 1 : 0;
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function eqri(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] === $operation[2] ? 1 : 0;
-
-        return $inputs;
-    }
-
-    /**
-     * @param array $inputs
-     * @param array $operation
-     * @return array
-     */
-    public function eqrr(array $inputs, array $operation): array
-    {
-        $inputs[$operation[3]] = $inputs[$operation[1]] === $inputs[$operation[2]] ? 1 : 0;
-
-        return $inputs;
     }
 }

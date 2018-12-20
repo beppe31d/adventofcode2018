@@ -13,5 +13,16 @@
     "psr-4": {
       "AdventOfCode\\": "src"
     }
+  },
+  "require": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit test"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\AdventOfCode\\": "test/"
+    }
   }
 }

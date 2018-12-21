@@ -188,17 +188,4 @@ class Day13 extends AbstractDay
 
         return [$map, $points];
     }
-
-    /**
-     * @return array
-     */
-    private function getMap(): array
-    {
-        $map = [];
-        foreach($this->inputs as $input) {
-            $map[] = \str_split(\str_replace("\n", '', $input));
-        }
-
-        return $map;
-    }
 }

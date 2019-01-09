@@ -16,12 +16,16 @@ class Day18 extends AbstractDay
     {
         $map = $this->getMap();
         echo 'What will the total resource value of the lumber collection area be after 10 minutes? '
-            . $this->getTotalResource($map);
+            . $this->getTotalResource($map, 10);
+
+        // With the commented code in getMapAfterMinutes I found the map repeats every 28 minutes after minute 455.
+        echo 'What will the total resource value of the lumber collection area be after 1000000000 minutes?'
+            . $this->getTotalResource($map, (1000000000 - 455) % 28 + 455);
     }
 
-    private function getTotalResource(array $map): int
+    private function getTotalResource(array $map, $minutes): int
     {
-        $map = $this->getMapAfterMinutes($map, 10);
+        $map = $this->getMapAfterMinutes($map, $minutes);
         $trees = 0;
         $lumberyards = 0;
         foreach ($map as $row) {
@@ -39,11 +43,27 @@ class Day18 extends AbstractDay
      */
     private function getMapAfterMinutes(array $map, int $minutes): array
     {
-        for ($i = 0; $i < $minutes; $i++) {
+//        $codes = [];
+        for ($i = 1; $i <= $minutes; $i++) {
             $map = $this->nextMinute($map);
 //            echo $i . "\n";
 //            echo $this->printMap($map);
+//            $hash = \md5(\serialize($map));
+//            if (false === isset($codes[$hash])) {
+//                $codes[$hash] = $i;
+//            } else {
+//                echo $codes[$hash] . ' ' . $i . "\n";
+//                return $map;
+//            }
+
         }
+
+//        $codes = \array_filter($codes, function ($item) {
+//            return $item > 20;
+//        });
+//        foreach ($codes as $key => $value) {
+//            echo $key . ' ' . $value . "\n";
+//        }
 
         return $map;
     }

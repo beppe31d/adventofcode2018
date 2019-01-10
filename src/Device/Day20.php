@@ -12,12 +12,15 @@ namespace AdventOfCode\Device;
  */
 class Day20 extends AbstractDay
 {
+    /** @var array */
+    private $steps;
+
     public function exec(): void
     {
 //        echo 'What is the largest number of doors you would be required to pass through to reach a room? '
 //            . $this->part1();
         echo "\n\n";
-        echo 'How many rooms have a shortest path from your current location that pass through at least 1000 doors?'
+        echo 'How many rooms have a shortest path from your current location that pass through at least 1000 doors? '
             . $this->part2();
     }
 
@@ -48,25 +51,29 @@ class Day20 extends AbstractDay
      * @param int $y
      * @param int|null $oldX
      * @param int|null $oldY
-     * @return int
+     * @param int $step
+     * @return array
      */
-    private function findAllPath(array $map, int $x, int $y, int $oldX = null, int $oldY = null): array
+    private function findAllPath(array $map, int $x, int $y, int $oldX = null, int $oldY = null, $step = 0): array
     {
         $paths = $this->findPaths($map, $x, $y, $oldX, $oldY);
 
+        $key = $y . '_' . $x;
+        if (false === isset($this->steps[$key]) || $this->steps[$key] > $step) {
+            $this->steps[$key] = $step;
+        }
+
         if (\count($paths) === 0) {
-            return [0];
+            return $this->steps;
         }
 
-        $steps = [];
+        $step++;
+
         foreach($paths as $path) {
-            $additionalSteps = $this->findAllPath($map, $path[0], $path[1], $x, $y);
-            foreach ($additionalSteps as $additionalStep) {
-                $steps[] = $additionalStep + 1;
-            }
+            $this->findAllPath($map, $path[0], $path[1], $x, $y, $step);
         }
 
-        return $steps;
+        return $this->steps;
     }
 
     /**
